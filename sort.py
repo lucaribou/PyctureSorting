@@ -1,7 +1,7 @@
-import os, fnmatch, re
+import os, fnmatch, re, shutil
 from PIL import Image, ExifTags
 
-imagesBaseDirectory = "/sourcedir"
+imagesBaseDirectory = "/sourcedir/"
 
 for dirpath, dirnames, filenames in os.walk(imagesBaseDirectory):
     for filename in [f for f in filenames if f.endswith('.jpg') or f.endswith('.png') or f.endswith('.JPG')]:
@@ -17,7 +17,7 @@ for dirpath, dirnames, filenames in os.walk(imagesBaseDirectory):
         else:
             image = Image.open(imagePath)
             image_exif = image.getexif()
-            if image_exif:
+            if image_exif and 36867 in image_exif:
                 date_taken = image_exif[36867]
                 year = int(date_taken[:4])
                 month = int(date_taken[5:7])
@@ -31,15 +31,17 @@ for dirpath, dirnames, filenames in os.walk(imagesBaseDirectory):
 
             new_image = dirName + filename
             if not os.path.exists(new_image):
-                os.rename(imagePath, new_image)
-                print("moved in " + new_image)
+                print("moving " + imagePath + " in " + new_image)
+                shutil.move(imagePath, new_image)
             else:
                 i = 1
                 base, extension = os.path.splitext(filename)
                 while True:
-                    new_name = os.path.join(dirName,base, base + "_" + str(i) + extension)
+                    new_name = os.path.join(dirName, base + "_" + str(i) + extension)
                     if not os.path.exists(new_name):
-                        os.rename(imagePath, new_name)
-                        print("moved copy in " + new_image)
+                        print("moving " + imagePath + " in " + new_name)
+                        shutil.move(imagePath, new_name)
                         break 
                     i += 1
+        else:
+            print("No date found for " + imagePath)
