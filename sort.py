@@ -15,13 +15,16 @@ for dirpath, dirnames, filenames in os.walk(imagesBaseDirectory):
             day = int(filename[8:10])
 
         else:
-            image = Image.open(imagePath)
-            image_exif = image.getexif()
-            if image_exif and 36867 in image_exif:
-                date_taken = image_exif[36867]
-                year = int(date_taken[:4])
-                month = int(date_taken[5:7])
-                day = int(date_taken[8:10])
+            try:
+                image = Image.open(imagePath)
+                image_exif = image.getexif()
+                if image_exif and 36867 in image_exif:
+                    date_taken = image_exif[36867]
+                    year = int(date_taken[:4])
+                    month = int(date_taken[5:7])
+                    day = int(date_taken[8:10])
+            except IOError:
+                print("Can't open the file : " + imagePath)
 
         if year is not None and month is not None and day is not None:
             dirName = "/targetdir/" + str(year) + "/" + str(month).zfill(2) + "/" + str(day).zfill(2) + "/"
