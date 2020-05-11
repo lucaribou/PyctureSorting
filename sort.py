@@ -2,8 +2,15 @@ import os, fnmatch, re, shutil, logging
 from datetime import datetime
 from PIL import Image, ExifTags
 
+from pathlib import Path
+
+currentDirectory = Path(os.path.dirname(os.path.realpath(__file__)))
+logFileName = filename=datetime.now().strftime("%Y%m%d_%H%M%S") + '.log'
+logFilePath = str(currentDirectory / logFileName)
+
 imagesBaseDirectory = "/volume1/photo/sort/"
-logging.basicConfig(filename=datetime.now().strftime("%m%d%Y_%H%M%S") + '.log',level=logging.DEBUG)
+logging.basicConfig(filename=logFilePath, level=logging.DEBUG)
+logging.info("Starting sort")
 
 for dirpath, dirnames, filenames in os.walk(imagesBaseDirectory):
     if not '@eaDir' in dirpath:
